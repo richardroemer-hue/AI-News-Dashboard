@@ -37,6 +37,12 @@ Pages → Branch auswählen → Root-Verzeichnis).
   Sortierung (neueste/älteste/alphabetisch).
 - **Hell/Dunkel-Modus**: folgt automatisch den Systemeinstellungen, lässt sich
   über den Button oben rechts manuell umschalten und wird gemerkt.
+- **X-Posts von KI-Größen** (Boris Cherny, Andrej Karpathy, Sam Altman, Yann
+  LeCun, Demis Hassabis): eingebettete, offizielle X-Timelines ohne API-Key
+  über `platform.twitter.com/widgets.js`. Standardmäßig **deaktiviert** (Opt-in
+  über den Button „X-Feeds laden & anzeigen“), da beim Laden ein Skript von X
+  nachgeladen wird und dabei Cookies/Tracking-Requests an X gehen können.
+  Zeigt jeweils alle öffentlichen Posts der Person, nicht themengefiltert.
 
 ## Anpassen
 
@@ -44,6 +50,8 @@ Pages → Branch auswählen → Root-Verzeichnis).
   `assets/app.js`.
 - **Live-Suchanfragen** anpassen: Array `LIVE_QUERIES` in `assets/app.js`
   (Suchbegriff, Sprache/Land pro Kategorie).
+- **X-Personen** ändern/ergänzen: Array `X_FIGURES` in `assets/app.js`
+  (Name + X-Handle).
 - **Kategorien**: Array `CATEGORIES` in `assets/app.js` – muss zu den in
   `SEED_ARTICLES`/`LIVE_QUERIES` verwendeten Kategorienamen passen.
 

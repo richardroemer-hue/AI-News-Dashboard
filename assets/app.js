@@ -42,6 +42,16 @@
     (url) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`
   ];
 
+  // Offizielle, öffentliche X-Profile ausgewählter KI-Größen. Eingebunden via
+  // X-Embed-Widgets (kein API-Key nötig, siehe renderXWidgets()).
+  const X_FIGURES = [
+    { name: "Boris Cherny", handle: "boris_cherny" },
+    { name: "Andrej Karpathy", handle: "karpathy" },
+    { name: "Sam Altman", handle: "sama" },
+    { name: "Yann LeCun", handle: "ylecun" },
+    { name: "Demis Hassabis", handle: "demishassabis" }
+  ];
+
   const CACHE_KEY = "kiwm_dashboard_live_cache_v1";
   const CACHE_TTL_MS = 30 * 60 * 1000;
   const FETCH_TIMEOUT_MS = 8000;
@@ -68,8 +78,75 @@
     statCount: document.getElementById("statCount"),
     statSources: document.getElementById("statSources"),
     statCategories: document.getElementById("statCategories"),
-    statUpdated: document.getElementById("statUpdated")
+    statUpdated: document.getElementById("statUpdated"),
+    xToggle: document.getElementById("xToggle"),
+    xGrid: document.getElementById("xGrid")
   };
+
+  let xWidgetsLoaded = false;
+  let xVisible = false;
+
+  function currentTheme() {
+    return document.documentElement.getAttribute("data-theme") ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  }
+
+  function loadTwitterWidgetsScript() {
+    return new Promise((resolve) => {
+      if (window.twttr && window.twttr.widgets) {
+        resolve();
+        return;
+      }
+      const existing = document.getElementById("twitter-wjs");
+      if (existing) {
+        existing.addEventListener("load", () => resolve());
+        return;
+      }
+      const script = document.createElement("script");
+      script.id = "twitter-wjs";
+      script.async = true;
+      script.src = "https://platform.twitter.com/widgets.js";
+      script.addEventListener("load", () => resolve());
+      script.addEventListener("error", () => resolve());
+      document.body.appendChild(script);
+    });
+  }
+
+  function buildXCards() {
+    const theme = currentTheme();
+    el.xGrid.innerHTML = X_FIGURES.map((p) => `
+      <div class="x-card">
+        <h3><a href="https://twitter.com/${p.handle}" target="_blank" rel="noopener noreferrer">${escapeHtml(p.name)} (@${escapeHtml(p.handle)})</a></h3>
+        <a class="twitter-timeline" data-height="480" data-theme="${theme}" href="https://twitter.com/${p.handle}?ref_src=twsrc%5Etfw">Tweets von @${escapeHtml(p.handle)}</a>
+      </div>
+    `).join("");
+  }
+
+  async function renderXWidgets() {
+    buildXCards();
+    await loadTwitterWidgetsScript();
+    if (window.twttr && window.twttr.widgets) {
+      window.twttr.widgets.load(el.xGrid);
+    }
+    xWidgetsLoaded = true;
+  }
+
+  function setXVisible(visible) {
+    xVisible = visible;
+    el.xGrid.hidden = !visible;
+    el.xToggle.textContent = visible ? "X-Feeds ausblenden" : "X-Feeds laden & anzeigen";
+    localStorage.setItem("kiwm_x_visible", visible ? "1" : "0");
+    if (visible && !xWidgetsLoaded) {
+      renderXWidgets();
+    }
+  }
+
+  function initXFeeds() {
+    el.xToggle.addEventListener("click", () => setXVisible(!xVisible));
+    if (localStorage.getItem("kiwm_x_visible") === "1") {
+      setXVisible(true);
+    }
+  }
 
   function fetchWithTimeout(url, ms) {
     const controller = new AbortController();
@@ -329,11 +406,10 @@
       document.documentElement.setAttribute("data-theme", saved);
     }
     el.themeToggle.addEventListener("click", () => {
-      const current = document.documentElement.getAttribute("data-theme") ||
-        (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-      const next = current === "dark" ? "light" : "dark";
+      const next = currentTheme() === "dark" ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", next);
       localStorage.setItem("kiwm_theme", next);
+      if (xWidgetsLoaded && xVisible) renderXWidgets();
     });
   }
 
@@ -356,6 +432,7 @@
   function init() {
     initTheme();
     initControls();
+    initXFeeds();
     populateSourceFilter();
     renderChips();
     renderGrid();

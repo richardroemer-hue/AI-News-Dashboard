@@ -68,6 +68,22 @@
     <div id="cardGrid" class="card-grid" aria-live="polite"></div>
   </main>
 
+  <section class="x-section" aria-label="X-Posts von KI-Größen">
+    <div class="x-section-header">
+      <h2>X-Posts von KI-Größen</h2>
+      <button id="xToggle" class="btn btn-primary" type="button">X-Feeds laden &amp; anzeigen</button>
+    </div>
+    <p class="x-disclaimer">
+      Zeigt die offiziellen, eingebetteten X-Timelines von Boris Cherny, Andrej Karpathy, Sam Altman,
+      Yann LeCun und Demis Hassabis (kein API-Key nötig). Enthält jeweils <strong>alle</strong> öffentlichen
+      Posts der Person, nicht nur solche zu KI-Wissensmanagement. Beim Aktivieren wird das Skript
+      <code>platform.twitter.com/widgets.js</code> von X nachgeladen – dabei können, wie bei jedem
+      eingebetteten Drittanbieter-Widget, Cookies bzw. Tracking-Requests an X gehen. Deshalb standardmäßig
+      deaktiviert; die Wahl wird im Browser gemerkt.
+    </p>
+    <div class="x-grid" id="xGrid" hidden></div>
+  </section>
+
   <footer class="app-footer">
     <p>
       Startdaten kuratiert am 25.07.2026. Beim Öffnen versucht das Dashboard,
