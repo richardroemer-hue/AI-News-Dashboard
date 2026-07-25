@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KI-Wissensmanagement Dashboard</title>
+<meta name="description" content="Aktuelle Neuigkeiten zu KI-gestütztem Wissensmanagement für Unternehmen.">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="topbar-heading">
+      <span class="logo" aria-hidden="true">🧠</span>
+      <div>
+        <h1>KI-Wissensmanagement Dashboard</h1>
+        <p class="subtitle">Neuigkeiten zu KI-gestütztem Wissensmanagement für Unternehmen</p>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span id="statusBadge" class="status-badge" title="Aktualisierungsstatus">Lädt…</span>
+      <button id="refreshBtn" class="btn btn-primary" type="button">
+        <span class="icon">↻</span> Aktualisieren
+      </button>
+      <button id="themeToggle" class="btn btn-ghost" type="button" aria-label="Farbschema umschalten">🌓</button>
+    </div>
+  </header>
+
+  <section class="stats" id="statsRow" aria-label="Übersicht">
+    <div class="stat-tile">
+      <span class="stat-value" id="statCount">–</span>
+      <span class="stat-label">Beiträge</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-value" id="statSources">–</span>
+      <span class="stat-label">Quellen</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-value" id="statCategories">–</span>
+      <span class="stat-label">Kategorien</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-value" id="statUpdated">–</span>
+      <span class="stat-label">Zuletzt aktualisiert</span>
+    </div>
+  </section>
+
+  <section class="controls" aria-label="Filter">
+    <input id="searchInput" class="search-input" type="search" placeholder="Suche nach Titel, Quelle oder Stichwort…" aria-label="Suche">
+    <div class="chip-row" id="categoryChips" role="group" aria-label="Kategorie-Filter"></div>
+    <div class="select-row">
+      <select id="sourceFilter" aria-label="Quelle filtern">
+        <option value="">Alle Quellen</option>
+      </select>
+      <select id="sortOrder" aria-label="Sortierung">
+        <option value="newest">Neueste zuerst</option>
+        <option value="oldest">Älteste zuerst</option>
+        <option value="az">Titel A–Z</option>
+      </select>
+    </div>
+  </section>
+
+  <main>
+    <div id="emptyState" class="empty-state" hidden>
+      Keine Beiträge gefunden. Suchbegriff oder Filter anpassen.
+    </div>
+    <div id="cardGrid" class="card-grid" aria-live="polite"></div>
+  </main>
+
+  <footer class="app-footer">
+    <p>
+      Startdaten kuratiert am 25.07.2026. Beim Öffnen versucht das Dashboard,
+      aktuelle Beiträge live via Google-News-RSS nachzuladen (im Browser, ohne eigenen Server).
+      Gelingt das nicht (z. B. wegen Netzwerk- oder CORS-Einschränkungen), werden die kuratierten
+      Startdaten bzw. zuvor zwischengespeicherte Ergebnisse angezeigt.
+    </p>
+  </footer>
+
+</div>
+<script src="assets/app.js"></script>
+</body>
+</html>
