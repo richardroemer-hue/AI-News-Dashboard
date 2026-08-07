@@ -45,7 +45,7 @@
   // Offizielle, öffentliche X-Profile ausgewählter KI-Größen. Eingebunden via
   // X-Embed-Widgets (kein API-Key nötig, siehe renderXWidgets()).
   const X_FIGURES = [
-    { name: "Boris Cherny", handle: "boris_cherny" },
+    { name: "Boris Cherny", handle: "bcherny" },
     { name: "Andrej Karpathy", handle: "karpathy" },
     { name: "Sam Altman", handle: "sama" },
     { name: "Yann LeCun", handle: "ylecun" },
