@@ -45,7 +45,7 @@
   // Offizielle, öffentliche X-Profile ausgewählter KI-Größen. Eingebunden via
   // X-Embed-Widgets (kein API-Key nötig, siehe renderXWidgets()).
   const X_FIGURES = [
-    { name: "Boris Cherny", handle: "boris_cherny" },
+    { name: "Boris Cherny", handle: "bcherny" },
     { name: "Andrej Karpathy", handle: "karpathy" },
     { name: "Sam Altman", handle: "sama" },
     { name: "Yann LeCun", handle: "ylecun" },
@@ -282,6 +282,7 @@
   }
 
   function formatDate(value) {
+    if (/^\d{4}$/.test(value)) return value;
     const d = parseDate(value);
     if (d.getTime() === 0) return value || "";
     return d.toLocaleDateString("de-DE", { year: "numeric", month: "short", day: "2-digit" });
@@ -360,21 +361,33 @@
     el.statCategories.textContent = new Set(state.articles.map((a) => a.category)).size;
   }
 
+  function isSameDay(a, b) {
+    return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  }
+
   function setUpdatedLabel(date) {
-    el.statUpdated.textContent = date
+    if (!date) {
+      el.statUpdated.textContent = "–";
+      el.statUpdated.removeAttribute("title");
+      return;
+    }
+    const sameDay = isSameDay(date, new Date());
+    el.statUpdated.textContent = sameDay
       ? date.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })
-      : "–";
+      : date.toLocaleString("de-DE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+    el.statUpdated.title = "Letzter erfolgreicher Live-Abruf: " +
+      date.toLocaleString("de-DE", { dateStyle: "medium", timeStyle: "short" });
   }
 
   async function runLiveRefresh(force) {
     if (!force) {
       const cached = readCache();
-      if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+      if (cached && cached.items.length > 0 && Date.now() - cached.timestamp < CACHE_TTL_MS) {
         combineArticles(cached.items);
         populateSourceFilter();
         renderChips();
         renderGrid();
-        setStatus(cached.items.length ? "live" : "fallback");
+        setStatus("live");
         setUpdatedLabel(new Date(cached.timestamp));
         return;
       }
@@ -385,9 +398,13 @@
     try {
       const liveItems = await fetchLiveArticles();
       combineArticles(liveItems);
-      writeCache(liveItems);
-      setStatus(liveItems.length ? "live" : "fallback", liveItems.length ? `${liveItems.length} neu` : "");
-      setUpdatedLabel(new Date());
+      if (liveItems.length > 0) {
+        writeCache(liveItems);
+        setStatus("live", `${liveItems.length} neu`);
+        setUpdatedLabel(new Date());
+      } else {
+        setStatus("fallback");
+      }
     } catch (_) {
       combineArticles([]);
       setStatus("fallback");
