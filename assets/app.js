@@ -282,6 +282,7 @@
   }
 
   function formatDate(value) {
+    if (/^\d{4}$/.test(value)) return value;
     const d = parseDate(value);
     if (d.getTime() === 0) return value || "";
     return d.toLocaleDateString("de-DE", { year: "numeric", month: "short", day: "2-digit" });
